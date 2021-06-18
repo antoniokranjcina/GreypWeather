@@ -8,7 +8,9 @@ import androidx.navigation.fragment.findNavController
 import com.greyp.weather.R
 import com.greyp.weather.databinding.ActivityMainBinding
 import com.greyp.weather.utils.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val binding by viewBinding(ActivityMainBinding::inflate)
