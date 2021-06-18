@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Greyp Weather</string>
+
+    <string name="home_fragment_text">Home fragment</string>
+
+    <!-- Menu -->
+    <string name="search_item">Search</string>
+
 </resources>
