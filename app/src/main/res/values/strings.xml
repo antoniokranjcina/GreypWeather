@@ -9,6 +9,10 @@
     <!-- Errors -->
     <string name="unexpected_error">Unexpected error. Please try again later.</string>
 
+    <!-- TabLayout Titles -->
+    <string name="city">City</string>
+    <string name="location">Location</string>
+
     <!-- Fragment Home -->
     <string name="degree_symbol">°</string>
     <string name="button_retry">Retry</string>
