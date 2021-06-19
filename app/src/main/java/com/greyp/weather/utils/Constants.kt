@@ -7,6 +7,11 @@ object Constants {
 
     const val OPEN_WEATHER_PREFERENCES = "open_weather_shared_preferences"
     const val LAST_SELECTED_CITY = "last_selected_city"
+    const val LAST_LOCATION_LONGITUDE = "last_location_longitude"
+    const val LAST_LOCATION_LATITUDE = "last_location_latitude"
     const val NO_CITY_SAVED = "no_city_saved"
+    const val NO_LOCATION_SAVED = "no_location_saved"
+
+    const val REQUEST_CHECK_CODE = 1
 
 }
