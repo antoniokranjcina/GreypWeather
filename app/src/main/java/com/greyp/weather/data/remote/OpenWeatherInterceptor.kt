@@ -12,6 +12,7 @@ class OpenWeatherInterceptor : Interceptor {
         val url = request.url
             .newBuilder()
             .addQueryParameter("APPID", Constants.API_KEY)
+            .addQueryParameter("units", "metric")
             .build()
 
         val apiRequest = request
