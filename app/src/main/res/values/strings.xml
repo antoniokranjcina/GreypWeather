@@ -9,4 +9,17 @@
     <!-- Errors -->
     <string name="unexpected_error">Unexpected error. Please try again later.</string>
 
+    <!-- Fragment Home -->
+    <string name="degree_symbol">°</string>
+    <string name="button_retry">Retry</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="wind_direction">Direction:</string>
+    <string name="wind_speed">Speed:</string>
+    <string name="sunrise_sunset">Sunrise and Sunset</string>
+    <string name="sunrise">Sunrise:</string>
+    <string name="sunset">Sunset:</string>
+    <string name="cloudiness">Cloudiness</string>
+
 </resources>
