@@ -239,6 +239,6 @@ class CityFragment : Fragment(R.layout.fragment_city), SearchView.OnQueryTextLis
     }
 
     companion object {
-        private const val TAG = "HomeFragment"
+        private const val TAG = "CityFragment"
     }
 }

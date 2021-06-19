@@ -26,4 +26,10 @@
     <string name="sunset">Sunset:</string>
     <string name="cloudiness">Cloudiness</string>
 
+    <!-- Fragment Location -->
+    <string name="alert_dialog_title">Location Permission Needed</string>
+    <string name="alert_dialog_message">In order to show weather near your area we need your location permission.</string>
+    <string name="alert_dialog_title_denied">Location Permission Permanently Denied</string>
+    <string name="alert_dialog_message_denied">Location permission is permanently denied. In order to use this feature, please go to application settings and grant location permission.</string>
+
 </resources>
