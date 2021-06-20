@@ -21,11 +21,15 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import com.google.android.material.snackbar.Snackbar
 import com.greyp.weather.R
-import com.greyp.weather.data.remote.responses.OpenWeather
+import com.greyp.weather.data.local.entities.LocationWeatherEntity
 import com.greyp.weather.databinding.FragmentLocationBinding
-import com.greyp.weather.ui.viewmodels.WeatherViewModel
-import com.greyp.weather.utils.*
+import com.greyp.weather.ui.viewmodels.LocationWeatherViewModel
+import com.greyp.weather.utils.Constants
+import com.greyp.weather.utils.Resource
+import com.greyp.weather.utils.Status
+import com.greyp.weather.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
@@ -35,11 +39,11 @@ import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
-class LocationFragment : Fragment(R.layout.fragment_location), View.OnClickListener {
+class LocationFragment : Fragment(R.layout.fragment_location) {
 
     private val binding by viewBinding(FragmentLocationBinding::bind)
 
-    private val viewModel: WeatherViewModel by viewModels()
+    private val viewModel: LocationWeatherViewModel by viewModels()
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -68,7 +72,6 @@ class LocationFragment : Fragment(R.layout.fragment_location), View.OnClickListe
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        setupOnClickListeners()
         getWeatherData()
         setupSwipeRefreshLayout()
         searchByLocation()
@@ -77,20 +80,6 @@ class LocationFragment : Fragment(R.layout.fragment_location), View.OnClickListe
     override fun onPause() {
         super.onPause()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
-    override fun onClick(v: View?) {
-        when (v!!) {
-            binding.buttonRetry -> {
-                searchByLocation()
-            }
-        }
-    }
-
-    private fun setupOnClickListeners() {
-        binding.apply {
-            buttonRetry.setOnClickListener(this@LocationFragment)
-        }
     }
 
     private fun setupSwipeRefreshLayout() {
@@ -113,66 +102,63 @@ class LocationFragment : Fragment(R.layout.fragment_location), View.OnClickListe
                     }
                     Status.ERROR -> {
                         Log.d(TAG, "getWeatherData: error - ${it.error}")
-                        error(it)
+                        displayErrorMessage(it)
+                        displayWeatherData(it)
                     }
                     Status.SUCCESS -> {
                         Log.d(TAG, "getWeatherData: success - data loaded - ${it.data}")
-                        success(it)
+                        displayWeatherData(it)
                     }
                 }
             }
         }
     }
 
-    private fun setupViewsVisibility(resource: Resource<OpenWeather>) {
+    private fun setupViewsVisibility(resource: Resource<LocationWeatherEntity>) {
         binding.apply {
             swipeRefreshLayout.isRefreshing = resource.status == Status.LOADING
-            textViewError.isVisible = resource.status == Status.ERROR
-            buttonRetry.isVisible = resource.status == Status.ERROR
 
-            textViewCity.isVisible = resource.status == Status.SUCCESS
-
-            view1.isVisible = resource.status == Status.SUCCESS
-            textViewTemperatureText.isVisible = resource.status == Status.SUCCESS
-            textViewCurrentTemp.isVisible = resource.status == Status.SUCCESS
-            textViewMinMaxTemp.isVisible = resource.status == Status.SUCCESS
-            textViewDescription.isVisible = resource.status == Status.SUCCESS
-
-            view2.isVisible = resource.status == Status.SUCCESS
-            textViewHumidityText.isVisible = resource.status == Status.SUCCESS
-            progressBarHumidity.isVisible = resource.status == Status.SUCCESS
-            textViewHumidityPercentage.isVisible = resource.status == Status.SUCCESS
-
-            view3.isVisible = resource.status == Status.SUCCESS
-            textViewWindText.isVisible = resource.status == Status.SUCCESS
-            textViewWindDirectionText.isVisible = resource.status == Status.SUCCESS
-            textViewWindDirection.isVisible = resource.status == Status.SUCCESS
-            textViewWindSpeedText.isVisible = resource.status == Status.SUCCESS
-            textViewWindSpeed.isVisible = resource.status == Status.SUCCESS
-
-            view4.isVisible = resource.status == Status.SUCCESS
-            textViewSunriseSunset.isVisible = resource.status == Status.SUCCESS
-            textViewSunriseText.isVisible = resource.status == Status.SUCCESS
-            textViewSunrise.isVisible = resource.status == Status.SUCCESS
-            textViewSunsetText.isVisible = resource.status == Status.SUCCESS
-            textViewSunset.isVisible = resource.status == Status.SUCCESS
-
-            view5.isVisible = resource.status == Status.SUCCESS
-            textViewClouds.isVisible = resource.status == Status.SUCCESS
-            progressBarCloudiness.isVisible = resource.status == Status.SUCCESS
-            textViewCloudiness.isVisible = resource.status == Status.SUCCESS
-
-            view6.isVisible = resource.status == Status.SUCCESS
+            val visibilityCondition = resource.data != null
+            textViewCity.isVisible = visibilityCondition
+            textViewUpdatedAt.isVisible = visibilityCondition
+            view1.isVisible = visibilityCondition
+            textViewTemperatureText.isVisible = visibilityCondition
+            textViewCurrentTemp.isVisible = visibilityCondition
+            textViewMinMaxTemp.isVisible = visibilityCondition
+            textViewDescription.isVisible = visibilityCondition
+            view2.isVisible = visibilityCondition
+            textViewHumidityText.isVisible = visibilityCondition
+            progressBarHumidity.isVisible = visibilityCondition
+            textViewHumidityPercentage.isVisible = visibilityCondition
+            view3.isVisible = visibilityCondition
+            textViewWindText.isVisible = visibilityCondition
+            textViewWindDirectionText.isVisible = visibilityCondition
+            textViewWindDirection.isVisible = visibilityCondition
+            textViewWindSpeedText.isVisible = visibilityCondition
+            textViewWindSpeed.isVisible = visibilityCondition
+            view4.isVisible = visibilityCondition
+            textViewSunriseSunset.isVisible = visibilityCondition
+            textViewSunriseText.isVisible = visibilityCondition
+            textViewSunrise.isVisible = visibilityCondition
+            textViewSunsetText.isVisible = visibilityCondition
+            textViewSunset.isVisible = visibilityCondition
+            view5.isVisible = visibilityCondition
+            textViewClouds.isVisible = visibilityCondition
+            progressBarCloudiness.isVisible = visibilityCondition
+            textViewCloudiness.isVisible = visibilityCondition
+            view6.isVisible = visibilityCondition
         }
     }
 
-    private fun error(resource: Resource<OpenWeather>) {
-        binding.apply {
-            textViewError.text = resource.error
+    private fun displayErrorMessage(resource: Resource<LocationWeatherEntity>) {
+        val snackbar = Snackbar.make(binding.root, resource.error!!, Snackbar.LENGTH_LONG)
+        snackbar.setAction(getString(R.string.dismiss)) {
+            snackbar.dismiss()
         }
+        snackbar.show()
     }
 
-    private fun success(resource: Resource<OpenWeather>) {
+    private fun displayWeatherData(resource: Resource<LocationWeatherEntity>) {
         val result = resource.data ?: return
         val main = result.main
         val wind = result.wind
@@ -180,15 +166,18 @@ class LocationFragment : Fragment(R.layout.fragment_location), View.OnClickListe
         val clouds = result.clouds
 
         val degree = getString(R.string.degree_symbol)
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
 
         binding.apply {
             textViewCity.text = result.name
+            val updatedAt = "${getString(R.string.updated_at)}${sdf.format(Date(result.updatedAt))}h"
+            textViewUpdatedAt.text = updatedAt
 
             val currentTemp = "${main.temperature.roundToInt()}$degree"
             val minMaxTemp = "${main.temperatureMin.roundToInt()}$degree/${main.temperatureMax.roundToInt()}$degree"
             textViewCurrentTemp.text = currentTemp
             textViewMinMaxTemp.text = minMaxTemp
-            textViewDescription.text = result.weatherList[0].description
+            textViewDescription.text = result.weather.description
 
             val humidityPercentage = "${main.humidity}%"
             progressBarHumidity.progress = main.humidity
@@ -199,7 +188,6 @@ class LocationFragment : Fragment(R.layout.fragment_location), View.OnClickListe
             textViewWindDirection.text = windDirection
             textViewWindSpeed.text = windSpeed
 
-            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
             val sunrise = "${sdf.format(Date(sys.sunrise * 1000))}h"
             val sunset = "${sdf.format(Date(sys.sunset * 1000))}h"
             textViewSunrise.text = sunrise

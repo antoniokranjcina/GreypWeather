@@ -14,4 +14,16 @@ object Constants {
 
     const val REQUEST_CHECK_CODE = 1
 
+    const val DATABASE_NAME = "greyp_open_weather_database"
+    const val CLOUDS_TABLE = "clouds_table"
+    const val COORDINATES_TABLE = "coordinates_table"
+    const val MAIN_TABLE = "main_table"
+    const val RAIN_TABLE = "rain_table"
+    const val SNOW_TABLE = "snow_table"
+    const val SYS_TABLE = "sys_table"
+    const val WEATHER_TABLE = "weather_table"
+    const val WIND_TABLE = "wind_table"
+    const val CITY_WEATHER_TABLE = "city_weather_table"
+    const val LOCATION_WEATHER_TABLE = "location_weather_table"
+
 }
