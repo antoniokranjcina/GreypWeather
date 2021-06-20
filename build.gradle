@@ -42,4 +42,8 @@ ext {
     coroutines = '1.4.3'
 
     hilt_lifecycle_viewmodel = '1.0.0-alpha03'
+
+    location = '18.0.0'
+
+    room = '2.3.0'
 }

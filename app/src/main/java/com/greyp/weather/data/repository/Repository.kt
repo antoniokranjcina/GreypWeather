@@ -1,13 +1,18 @@
 package com.greyp.weather.data.repository
 
+import android.util.Log
+import androidx.room.withTransaction
 import com.google.gson.Gson
+import com.greyp.weather.data.local.GreypWeatherDatabase
 import com.greyp.weather.data.remote.OpenWeatherMapApi
 import com.greyp.weather.utils.Resource
+import com.greyp.weather.utils.openWeatherToCityWeatherEntity
+import com.greyp.weather.utils.openWeatherToLocationWeatherEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class Repository @Inject constructor(private val api: OpenWeatherMapApi) {
+class Repository @Inject constructor(private val api: OpenWeatherMapApi, private val greypWeatherDatabase: GreypWeatherDatabase) {
 
     suspend fun getWeatherByCityName(cityName: String) = withContext(Dispatchers.IO) {
         try {
@@ -15,18 +20,33 @@ class Repository @Inject constructor(private val api: OpenWeatherMapApi) {
 
             when (response.code()) {
                 200 -> {
-                    Resource.success(response.body())
+                    Log.d(TAG, "getWeatherByLocation: 200 - ${response.body()}")
+                    greypWeatherDatabase.withTransaction {
+                        greypWeatherDatabase.cityWeatherDao().apply {
+                            deleteAllWeather()
+                            response.body()?.let { insertWeather(it.openWeatherToCityWeatherEntity()) }
+                        }
+                    }
+
+                    val resultToDisplay = greypWeatherDatabase.cityWeatherDao().getWeather()
+                    Resource.success(resultToDisplay)
                 }
                 404 -> {
-                    Resource.error("City Not Found")
+                    Log.e(TAG, "getWeatherByLocation: 404 - City Not Found")
+                    Resource.error(errorText = "City Not Found", data = null)
                 }
                 else -> {
                     val error = gson.fromJson(response.errorBody()?.charStream().toString(), String::class.java)
-                    Resource.error(errorText = error)
+                    Log.d(TAG, "getWeatherByLocation: else - error - $error")
+                    Resource.error(errorText = error, data = null)
                 }
             }
         } catch (e: Exception) {
-            Resource.error(errorText = e.message ?: "Unexpected error. Please try again later.")
+            val error = e.message ?: "Unexpected error. Please try again later."
+            Log.e(TAG, "getWeatherByCityName: Exception - $error")
+
+            val cachedData = greypWeatherDatabase.cityWeatherDao().getWeather()
+            Resource.error(errorText = error, data = cachedData)
         }
     }
 
@@ -36,24 +56,41 @@ class Repository @Inject constructor(private val api: OpenWeatherMapApi) {
 
             when (response.code()) {
                 200 -> {
-                    Resource.success(response.body())
+                    Log.d(TAG, "getWeatherByLocation: 200 - ${response.body()}")
+                    greypWeatherDatabase.withTransaction {
+                        greypWeatherDatabase.locationWeatherDao().apply {
+                            deleteAllWeather()
+                            response.body()?.let { insertWeather(it.openWeatherToLocationWeatherEntity()) }
+                        }
+                    }
+
+                    val resultToDisplay = greypWeatherDatabase.locationWeatherDao().getWeather()
+                    Resource.success(resultToDisplay)
                 }
                 404 -> {
-                    Resource.error("City Not Found")
+                    Log.e(TAG, "getWeatherByLocation: 404 - City Not Found")
+                    Resource.error(errorText = "City Not Found", data = null)
                 }
                 else -> {
                     val error = gson.fromJson(response.errorBody()?.charStream().toString(), String::class.java)
-                    Resource.error(errorText = error)
+                    Log.d(TAG, "getWeatherByLocation: else - error - $error")
+                    Resource.error(errorText = error, data = null)
                 }
             }
         } catch (e: Exception) {
-            Resource.error(errorText = e.message ?: "Unexpected error. Please try again later.")
+            val error = e.message ?: "Unexpected error. Please try again later."
+            Log.e(TAG, "getWeatherByLocation: Exception - $error")
+
+            val cachedData = greypWeatherDatabase.locationWeatherDao().getWeather()
+            Resource.error(errorText = error, data = cachedData)
         }
     }
 
 
     companion object {
-        val gson = Gson()
+        private const val TAG = "Repository"
+
+        private val gson = Gson()
     }
 
 }
