@@ -1,8 +1,10 @@
 package com.greyp.weather.data.repository
 
+import android.app.Application
 import android.util.Log
 import androidx.room.withTransaction
 import com.google.gson.Gson
+import com.greyp.weather.R
 import com.greyp.weather.data.local.GreypWeatherDatabase
 import com.greyp.weather.data.remote.OpenWeatherMapApi
 import com.greyp.weather.utils.Resource
@@ -10,9 +12,14 @@ import com.greyp.weather.utils.openWeatherToCityWeatherEntity
 import com.greyp.weather.utils.openWeatherToLocationWeatherEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 import javax.inject.Inject
 
-class Repository @Inject constructor(private val api: OpenWeatherMapApi, private val greypWeatherDatabase: GreypWeatherDatabase) {
+class Repository @Inject constructor(
+    private val api: OpenWeatherMapApi,
+    private val greypWeatherDatabase: GreypWeatherDatabase,
+    private val application: Application
+) {
 
     suspend fun getWeatherByCityName(cityName: String) = withContext(Dispatchers.IO) {
         try {
@@ -41,8 +48,14 @@ class Repository @Inject constructor(private val api: OpenWeatherMapApi, private
                     Resource.error(errorText = error, data = null)
                 }
             }
+        } catch (e: UnknownHostException) {
+            val error = application.getString(R.string.unknown_host)
+            Log.d(TAG, "getWeatherByCityName: UnknownHostException - $error")
+
+            val cachedData = greypWeatherDatabase.cityWeatherDao().getWeather()
+            Resource.error(errorText = error, cachedData)
         } catch (e: Exception) {
-            val error = e.message ?: "Unexpected error. Please try again later."
+            val error = e.message ?: application.getString(R.string.unexpected_error)
             Log.e(TAG, "getWeatherByCityName: Exception - $error")
 
             val cachedData = greypWeatherDatabase.cityWeatherDao().getWeather()
@@ -77,8 +90,14 @@ class Repository @Inject constructor(private val api: OpenWeatherMapApi, private
                     Resource.error(errorText = error, data = null)
                 }
             }
+        } catch (e: UnknownHostException) {
+            val error = application.getString(R.string.unknown_host)
+            Log.d(TAG, "getWeatherByLocation: UnknownHostException - $error")
+
+            val cachedData = greypWeatherDatabase.locationWeatherDao().getWeather()
+            Resource.error(errorText = error, cachedData)
         } catch (e: Exception) {
-            val error = e.message ?: "Unexpected error. Please try again later."
+            val error = e.message ?: application.getString(R.string.unexpected_error)
             Log.e(TAG, "getWeatherByLocation: Exception - $error")
 
             val cachedData = greypWeatherDatabase.locationWeatherDao().getWeather()

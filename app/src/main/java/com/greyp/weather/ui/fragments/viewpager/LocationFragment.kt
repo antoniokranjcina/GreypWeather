@@ -170,7 +170,7 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
 
         binding.apply {
             textViewCity.text = result.name
-            val updatedAt = "${getString(R.string.updated_at)}${sdf.format(Date(result.updatedAt))}h"
+            val updatedAt = "${getString(R.string.updated_at)} ${sdf.format(Date(result.updatedAt))}h"
             textViewUpdatedAt.text = updatedAt
 
             val currentTemp = "${main.temperature.roundToInt()}$degree"
