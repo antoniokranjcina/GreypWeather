@@ -46,7 +46,6 @@ class CityFragment : Fragment(R.layout.fragment_city), SearchView.OnQueryTextLis
         setHasOptionsMenu(true)
         getWeatherData()
         setupSwipeRefreshLayout()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -185,7 +184,7 @@ class CityFragment : Fragment(R.layout.fragment_city), SearchView.OnQueryTextLis
 
         binding.apply {
             textViewCity.text = result.name
-            val updatedAt = "${getString(R.string.updated_at)}${sdf.format(Date(result.updatedAt))}h"
+            val updatedAt = "${getString(R.string.updated_at)} ${sdf.format(Date(result.updatedAt))}h"
             textViewUpdatedAt.text = updatedAt
 
             val currentTemp = "${main.temperature.roundToInt()}$degree"
