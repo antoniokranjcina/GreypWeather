@@ -10,7 +10,7 @@ import com.greyp.weather.utils.Constants
 @Entity(tableName = Constants.CITY_WEATHER_TABLE)
 data class CityWeatherEntity(
     @ColumnInfo(name = "updated_at")
-    val updatedAt: Long = System.currentTimeMillis(),
+    var updatedAt: Long = System.currentTimeMillis(),
     @Embedded
     val coordinates: CoordinatesEntity,
     @Embedded

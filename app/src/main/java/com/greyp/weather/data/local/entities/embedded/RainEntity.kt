@@ -9,7 +9,7 @@ import com.greyp.weather.utils.Constants
 data class RainEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "rain_volume_in_1h")
-    val volumeIn1h: Int,
+    val volumeIn1h: Double,
     @ColumnInfo(name = "rain_volume_in_3h")
-    val volumeIn3h: Int
+    val volumeIn3h: Double
 )
