@@ -13,6 +13,7 @@ import com.greyp.weather.utils.openWeatherToCityWeatherEntity
 import com.greyp.weather.utils.openWeatherToLocationWeatherEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.withContext
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -108,7 +109,7 @@ class WeatherRepository @Inject constructor(
     }
 
     fun getLocalLocationWeather(): Flow<LocationWeatherEntity> {
-        val result = greypWeatherDatabase.locationWeatherDao().getWeatherAsFlow()
+        val result = greypWeatherDatabase.locationWeatherDao().getWeatherAsFlow().filterNotNull()
         Log.d(TAG, "getLocalLocationWeather: $result")
         return result
     }

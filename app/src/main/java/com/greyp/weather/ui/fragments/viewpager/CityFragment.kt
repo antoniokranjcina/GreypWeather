@@ -130,37 +130,39 @@ class CityFragment : Fragment(R.layout.fragment_city), SearchView.OnQueryTextLis
 
     private fun setupViewsVisibility(resource: Resource<CityWeatherEntity>) {
         binding.apply {
-            swipeRefreshLayout.isRefreshing = resource.status == Status.LOADING
+            val hasData = resource.data != null
+            val isLoading = resource.status == Status.LOADING
 
-            val visibilityCondition = resource.data != null
-            textViewCity.isVisible = visibilityCondition
-            textViewUpdatedAt.isVisible = visibilityCondition
-            view1.isVisible = visibilityCondition
-            textViewTemperatureText.isVisible = visibilityCondition
-            textViewCurrentTemp.isVisible = visibilityCondition
-            textViewMinMaxTemp.isVisible = visibilityCondition
-            textViewDescription.isVisible = visibilityCondition
-            view2.isVisible = visibilityCondition
-            textViewHumidityText.isVisible = visibilityCondition
-            progressBarHumidity.isVisible = visibilityCondition
-            textViewHumidityPercentage.isVisible = visibilityCondition
-            view3.isVisible = visibilityCondition
-            textViewWindText.isVisible = visibilityCondition
-            textViewWindDirectionText.isVisible = visibilityCondition
-            textViewWindDirection.isVisible = visibilityCondition
-            textViewWindSpeedText.isVisible = visibilityCondition
-            textViewWindSpeed.isVisible = visibilityCondition
-            view4.isVisible = visibilityCondition
-            textViewSunriseSunset.isVisible = visibilityCondition
-            textViewSunriseText.isVisible = visibilityCondition
-            textViewSunrise.isVisible = visibilityCondition
-            textViewSunsetText.isVisible = visibilityCondition
-            textViewSunset.isVisible = visibilityCondition
-            view5.isVisible = visibilityCondition
-            textViewClouds.isVisible = visibilityCondition
-            progressBarCloudiness.isVisible = visibilityCondition
-            textViewCloudiness.isVisible = visibilityCondition
-            view6.isVisible = visibilityCondition
+            swipeRefreshLayout.isRefreshing = isLoading
+            textViewCityInitMessage.isVisible = !hasData && !isLoading
+            textViewCity.isVisible = hasData
+            textViewUpdatedAt.isVisible = hasData
+            view1.isVisible = hasData
+            textViewTemperatureText.isVisible = hasData
+            textViewCurrentTemp.isVisible = hasData
+            textViewMinMaxTemp.isVisible = hasData
+            textViewDescription.isVisible = hasData
+            view2.isVisible = hasData
+            textViewHumidityText.isVisible = hasData
+            progressBarHumidity.isVisible = hasData
+            textViewHumidityPercentage.isVisible = hasData
+            view3.isVisible = hasData
+            textViewWindText.isVisible = hasData
+            textViewWindDirectionText.isVisible = hasData
+            textViewWindDirection.isVisible = hasData
+            textViewWindSpeedText.isVisible = hasData
+            textViewWindSpeed.isVisible = hasData
+            view4.isVisible = hasData
+            textViewSunriseSunset.isVisible = hasData
+            textViewSunriseText.isVisible = hasData
+            textViewSunrise.isVisible = hasData
+            textViewSunsetText.isVisible = hasData
+            textViewSunset.isVisible = hasData
+            view5.isVisible = hasData
+            textViewClouds.isVisible = hasData
+            progressBarCloudiness.isVisible = hasData
+            textViewCloudiness.isVisible = hasData
+            view6.isVisible = hasData
         }
     }
 
