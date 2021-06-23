@@ -203,16 +203,22 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
         val latitude = sharedPreferences.getString(Constants.LAST_LOCATION_LATITUDE, Constants.NO_LOCATION_SAVED)
         val longitude = sharedPreferences.getString(Constants.LAST_LOCATION_LONGITUDE, Constants.NO_LOCATION_SAVED)
 
+        requestPermission()
+        askForGps()
         if (!latitude.isNullOrEmpty() && !longitude.isNullOrEmpty() && latitude != Constants.NO_LOCATION_SAVED && longitude != Constants.NO_LOCATION_SAVED) {
             viewModel.getWeatherByLocation(latitude = latitude, longitude = longitude)
         } else {
             binding.swipeRefreshLayout.isRefreshing = false
-            requestPermission()
-            askForGps()
         }
     }
 
     private fun askForGps() {
+        val locationRequest = LocationRequest.create().apply {
+            fastestInterval = 1500
+            interval = 300
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
         val builder: LocationSettingsRequest.Builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         val result: Task<LocationSettingsResponse> = LocationServices.getSettingsClient(requireContext()).checkLocationSettings(builder.build())
 
@@ -240,6 +246,12 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
     }
 
     private fun requestPermission() {
+        val locationRequest = LocationRequest.create().apply {
+            fastestInterval = 1500
+            interval = 300
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
         when {
             ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
                 // Permission is granted
@@ -263,7 +275,7 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
         AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 Log.d(TAG, "dialog: 'OK' clicked.")
                 launcher?.launch(ACCESS_FINE_LOCATION)
             }
@@ -287,12 +299,6 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
 
     companion object {
         private const val TAG = "LocationFragment"
-
-        private val locationRequest = LocationRequest.create().apply {
-            fastestInterval = 1500
-            interval = 300
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
     }
 
 }
