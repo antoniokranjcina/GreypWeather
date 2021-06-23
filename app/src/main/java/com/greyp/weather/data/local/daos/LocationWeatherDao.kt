@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.greyp.weather.data.local.entities.LocationWeatherEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocationWeatherDao {
@@ -14,6 +15,9 @@ interface LocationWeatherDao {
 
     @Query("SELECT * FROM location_weather_table LIMIT 1")
     fun getWeather(): LocationWeatherEntity
+
+    @Query("SELECT * FROM location_weather_table LIMIT 1")
+    fun getWeatherAsFlow(): Flow<LocationWeatherEntity>
 
     @Query("DELETE FROM location_weather_table")
     suspend fun deleteAllWeather()
