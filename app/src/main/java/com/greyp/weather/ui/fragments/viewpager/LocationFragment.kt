@@ -6,7 +6,6 @@ import android.content.IntentSender
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -50,23 +49,6 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private var locationCallback: LocationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            val locationList = locationResult.locations
-            if (locationList.isNotEmpty()) {
-                // The last location in the list is the newest
-                val lastLocation = locationList.last()
-                if (lastLocation != null) {
-                    val editor = sharedPreferences.edit()
-                    editor.putString(Constants.LAST_LOCATION_LONGITUDE, "${lastLocation.longitude}").apply()
-                    editor.putString(Constants.LAST_LOCATION_LATITUDE, "${lastLocation.latitude}").apply()
-                    Log.d(TAG, "onLocationResult - longitude: ${lastLocation.longitude}")
-                    Log.d(TAG, "onLocationResult - latitude: ${lastLocation.latitude}")
-                }
-            }
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -75,11 +57,6 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
         getWeatherData()
         setupSwipeRefreshLayout()
         searchByLocation()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
     private fun setupSwipeRefreshLayout() {
@@ -246,17 +223,16 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
     }
 
     private fun requestPermission() {
-        val locationRequest = LocationRequest.create().apply {
-            fastestInterval = 1500
-            interval = 300
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
         when {
             ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
                 // Permission is granted
                 Log.d(TAG, "requestPermission: granted.")
-                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    Log.d(TAG, "requestPermission: ${location.longitude} ${location.latitude}")
+                    val editor = sharedPreferences.edit()
+                    editor.putString(Constants.LAST_LOCATION_LONGITUDE, "${location.longitude}").apply()
+                    editor.putString(Constants.LAST_LOCATION_LATITUDE, "${location.latitude}").apply()
+                }
             }
             ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), ACCESS_FINE_LOCATION) -> {
                 // Show dialog
