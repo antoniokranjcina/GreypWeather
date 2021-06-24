@@ -229,7 +229,8 @@ class LocationFragment : Fragment(R.layout.fragment_location) {
             ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
                 // Permission is granted
                 Log.d(TAG, "requestPermission: granted.")
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                    val location = it ?: return@addOnSuccessListener
                     Log.d(TAG, "requestPermission: ${location.longitude} ${location.latitude}")
                     val editor = sharedPreferences.edit()
                     editor.putString(Constants.LAST_LOCATION_LONGITUDE, "${location.longitude}").apply()
