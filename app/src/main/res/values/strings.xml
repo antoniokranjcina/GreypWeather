@@ -1,3 +1,49 @@
 <resources>
     <string name="app_name">Greyp Weather</string>
+
+    <string name="home_fragment_text">Home fragment</string>
+
+    <!-- Menu -->
+    <string name="search_item">Search</string>
+
+    <!-- Errors -->
+    <string name="unexpected_error">Unexpected error. Please try again later.</string>
+    <string name="unknown_host">There is a problem with loading new data. Please try again later.</string>
+    <string name="no_internet_connection">No Internet Connection.</string>
+
+    <!-- TabLayout Titles -->
+    <string name="city">City</string>
+    <string name="location">Location</string>
+
+    <!-- Fragment Home -->
+    <string name="updated_at">Updated at: </string>
+    <string name="degree_symbol">°</string>
+    <string name="button_retry">Retry</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="wind_direction">Direction:</string>
+    <string name="wind_speed">Speed:</string>
+    <string name="sunrise_sunset">Sunrise and Sunset</string>
+    <string name="sunrise">Sunrise:</string>
+    <string name="sunset">Sunset:</string>
+    <string name="cloudiness">Cloudiness</string>
+    <string name="dismiss">Dismiss</string>
+
+    <!-- Fragment City -->
+    <string name="text_view_city_init_message">Please search for city in search bar.</string>
+
+    <!-- Fragment Location -->
+    <string name="text_view_location_init_message">Please make sure you have granted location permission and have gps turned on.</string>
+    <string name="alert_dialog_title">Location Permission Needed</string>
+    <string name="alert_dialog_message">In order to show weather near your area we need your location permission.</string>
+    <string name="alert_dialog_title_denied">Location Permission Permanently Denied</string>
+    <string name="alert_dialog_message_denied">Location permission is permanently denied. In order to use this feature, please go to application settings and grant location permission.</string>
+    <string name="ok">OK</string>
+
+    <!-- Widget -->
+    <string name="city_widget">City</string>
+    <string name="not_widget">Not</string>
+    <string name="found_widget">Found</string>
+
 </resources>
